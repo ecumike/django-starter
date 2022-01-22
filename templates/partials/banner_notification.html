@@ -1,0 +1,25 @@
+{% for banner in banners %}
+
+    {% if banner.banner_type == "info" %}
+        <div class="ph3 ph4-ns bg-dark-blue">
+            <div class="tc pv1 {{ templateHelpers.classes.grid }}">
+                <p class="pb0 white">{{ banner.banner_text }}</p>
+            </div>
+        </div>
+    {% elif banner.banner_type == "warn" %}
+        <div class="ph3 ph4-ns bg-gold">
+            <div class="tc pv1 {{ templateHelpers.classes.grid }}">
+                <p class="pb0">{{ banner.banner_text }}</p>
+            </div>
+        </div>
+    {% elif banner.banner_type == "alert" %}
+        <div class="ph3 ph4-ns bg-dark-red">
+                <div class="tc pv1 {{ templateHelpers.classes.grid }}">
+                    <p class="pb0 white">{{ banner.banner_text }}</p>
+                </div>
+            </div>
+        </div>
+   {% endif %}
+    
+    
+{% endfor %}

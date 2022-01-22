@@ -1,0 +1,28 @@
+{% extends "page_template.html" %}
+
+{% load static %}
+
+
+{% block browserTitle %}{{ block.super}} Admin center{% endblock %}
+
+{% block pageTitle %} Admin center{% endblock %}
+
+{% block extraFiles %}
+
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="{{ templateHelpers.classes.grid }} mt4">
+		
+		<div class="mt4 flex flex-wrap mb3">
+			
+			{% url 'myapp:admin_adminaccess' as url %}
+			{% include 'partials/admin_home_item.html' with url=url title='Admin access' totalNum=counts.admins description='Manage who has full access' %}
+
+		</div>
+		
+	</div>
+	
+{% endblock %}

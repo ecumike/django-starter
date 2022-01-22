@@ -1,0 +1,12 @@
+{% if field.field.widget.input_type == 'checkbox' %}
+<div class="mb4 bo-checkboxradio">
+	{{ field }} <label for="id_{{ field.name }}">{{ field.label|capfirst }}</label>
+	<span class="db dark-red mt3">{{ field.errors.as_text }}</span>
+</div>
+{% else %}
+<div class="mb4">
+	<div class="b mb2">{{ field.label_tag }}</div>
+	<div>{{ field }}</div>
+	<div class="db dark-red mt3 mb3">{{ field.errors.as_text }}</div>
+</div>
+{% endif %}

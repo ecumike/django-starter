@@ -1,0 +1,186 @@
+{% extends "page_template.html" %}
+
+{% load static %}
+{% load beautify %}
+
+
+{% block browserTitle %}{{ block.super}} Admin - Admin access{% endblock %}
+
+{% block pageTitle %} Admin access{% endblock %}
+
+{% block extraFiles %}
+
+	<style>
+		
+		.custom-current-admins .custom-removeuser {
+			opacity: 0;
+			transition: opacity .4s var(--animation-curve);
+		}
+		
+		.custom-current-admins .flex:hover .custom-removeuser,
+		.custom-current-admins .custom-removeuser:focus,
+		.custom-current-admins .custom-removeuser:hover {
+			opacity: 1;
+		}
+		
+	</style>
+	
+	
+	<script>
+
+		(function ($) {
+			var $newUserForm, $addingUserMsg;
+			
+			function addRemoveUser (action, email) {
+				$.ajax({
+					url: '{% url 'myapp:api_adminaccess' %}',
+					type: 'post',
+					dataType: 'json',
+					data: {
+						'csrfmiddlewaretoken': '{{ csrf_token }}',
+						'email': email.toLowerCase(),
+						'action': action
+					},
+					success: function (data) {
+						window.location.href = '?n=' + new Date().getMilliseconds();
+					},
+					error: function (data) {
+						alert('There was an error managing the user.\nContact Michael Santelia with this message:\n' + data.responseJSON.results.message);
+					},
+				});
+			}
+			
+
+			function setupRemoveUserButtons () {
+				$('.custom-current-admins').on('click', 'a', function (evt) {
+					if (evt.currentTarget.classList.contains('custom-removeuser')) {
+						evt.preventDefault();
+						addRemoveUser('remove', $(evt.currentTarget).data('email'));						
+					}
+				});
+			}
+			
+
+			function setupNewuserForm () {
+				$('#custom-new-user-form').on('submit', function (evt) {
+					evt.preventDefault();
+					
+					var $selectList = $('#custom-employee-search');
+					
+					if (!$selectList.val()) {
+						alert('You can\'t add a ghost as an admin.');
+						return;
+					}
+					
+					$('.custom-adding-user-wait').removeClass('ibm-hide');
+					
+					$.ajax({
+						url: '{% url 'myapp:api_user_add' %}',
+						type: 'post',
+						dataType: 'json',
+						data: {
+							'csrfmiddlewaretoken': '{{ csrf_token }}',
+							'email': $selectList.val().toLowerCase()
+						},
+						success: function (data) {
+							addRemoveUser('add', $selectList.val().toLowerCase());
+						},
+						error: function (data) {
+							$addingUserMsg.addClass('ibm-hide');
+							console.log('There was a problem');
+						},
+					});
+				});
+			}
+			
+			
+			function setupEmployeeSearch () {
+				$('#custom-employee-search').select2({
+					placeholder: $('#custom-employee-search').data('placeholder'),
+					minimumInputLength: 1,
+					width: '100%',
+					ajax: {
+						url: 'https://w3-services1.w3-969.ibm.com/myw3/unified-profile/v1/search/user?searchConfig=optimized_search&userId=&rows=8&timeout=4000&threshold=0',
+						dataType: 'json',
+						data: function (params) {
+							return query = {
+								query: params.term
+							}
+						},
+						processResults: function (data) {
+							var selectOpts = [];
+							
+							$.each(data.results, function () {
+								selectOpts.push({
+									id: this.preferredIdentity,
+									text: this.notesEmail
+								});
+							});
+							return {
+								results: selectOpts
+							};
+						}
+					}
+				});
+			}
+			
+			
+			$(function () {
+				$newUserForm = $('#custom-new-user-form');
+				$addingUserMsg = $('#custom-addinguser');
+				setupRemoveUserButtons();
+				setupNewuserForm();
+				setupEmployeeSearch();
+			});
+			
+		})(jQuery);
+		
+	</script>
+
+
+
+
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="{{ templateHelpers.classes.grid }} mt4">
+		
+		<p>If you remove yourself, you will lock yourself out and require another admin to re-add you.</p>
+		
+		<div class="flex-ns">
+			<div class="w-100 mw5-l">
+				<p>There are <code class="b dark-green">{{ adminUsers.count|default:0 }}</code> users that have admin access:</p>
+				<div class="custom-current-admins">
+					{% for user in adminUsers %}
+						<div class="flex">
+							<a title="Revoke user's admin access" class="dark-red custom-removeuser" data-email="{{ user.username }}" href="#" >{{ templateHelpers.html.icons.close|safe }}</a>
+							<a class="ml2 custom-adminuser" href="https://w3.ibm.com/bluepages/?s={{ user.email }}" target="_blank" title="View bluepages record in new window">{{ user.username }}</a>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+			
+			<div class="w4-ns mb4"></div>
+			
+			<div class="w-100 mw6-l">
+				<p class="b">Grant admin access to a user</p>
+				
+				<form id="custom-new-user-form" method="post" action="{% url 'myapp:api_user_add' %}">
+					{% csrf_token %}
+					<div class="mt3 mb4 relative">
+						<select id="custom-employee-search" data-width="100%" class="w-100" data-placeholder="Search for an employee"></select>
+					</div>
+					
+					<div>
+						<button type="submit" class="{{ templateHelpers.classes.smallButton }} {{ templateHelpers.classes.bluePriButton }} ">Add</button>
+					</div>
+				</form>
+				
+			</div>
+		</div>
+		
+	</div>
+
+{% endblock %}

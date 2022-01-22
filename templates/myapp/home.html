@@ -1,0 +1,22 @@
+{% extends "page_template.html" %}
+
+{% load static %}
+
+{% block browserTitle %}{{ block.super}} Home {% endblock %}
+
+{% block pageTitle %} My app home page {% endblock %}
+
+
+{% block extraFiles %}	
+{% endblock %}
+
+
+{% block content %}
+
+	<div class="{{ templateHelpers.classes.grid }} mt4 flex flex-wrap">
+		
+		<p>This is the home page.</p>
+
+	</div>
+
+{% endblock %}

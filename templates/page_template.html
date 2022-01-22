@@ -1,0 +1,183 @@
+{% load common_templatetags %}
+{% load static %}
+{% load hijack_tags %}
+{% getTemplateHelpers as templateHelpers %}
+
+
+
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset="UTF-8">
+		<link href="{% static 'shared/img/favicon.ico' %}" rel="icon"/>
+
+		<!--
+
+        88888888ba,    88
+        88      `"8b   ""
+        88        `8b
+        88         88  88  ,adPPYYba,  8b,dPPYba,    ,adPPYb,d8   ,adPPYba,
+        88         88  88  ""     `Y8  88P'   `"8a  a8"    `Y88  a8"     "8a
+        88         8P  88  ,adPPPPP88  88       88  8b       88  8b       d8
+        88      .a8P   88  88,    ,88  88       88  "8a,   ,d88  "8a,   ,a8"
+        88888888Y"'    88  `"8bbdP"Y8  88       88   `"YbbdP"Y8   `"YbbdP"'
+                      ,88                            aa,    ,88
+                    888P"                             "Y8bbdP"
+
+		-->
+
+		<meta name="author" content="Michael Santelia">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="robots" content="noindex,nofollow">
+		<meta name="description" content="__________________">
+		<meta name="keywords" content="__________________">
+		<meta name="geo.country" content="WW">
+		<meta name="dcterms.date" content="2019-11-01">
+		<meta name="dcterms.rights" content="© Copyright IBM Corp. 2019">
+
+		<title>{% block browserTitle %}My app - {% endblock %}</title>
+
+		<link href="{{ BLACKOPS_COS_BUCKET_URL }}tachyons.min.css" rel="stylesheet">
+		<link href="{{ BLACKOPS_COS_BUCKET_URL }}select2.min.css" rel="stylesheet">
+		<link href="{{ BLACKOPS_COS_BUCKET_URL }}hint.min.css" rel="stylesheet">
+		<link href="{{ BLACKOPS_COS_BUCKET_URL }}bo-common.min.css" rel="stylesheet">
+		<link href="{% static 'shared/css/site-common.css' %}" rel="stylesheet">
+		
+		{% if debug %}
+		<link href="{% static 'hijack/hijack-styles.css' %}" rel="stylesheet">
+		{% endif %}
+		
+		<style>
+			{% block leadspaceStyles %}
+				.custom-leadspace {
+					background: #000;
+					min-height: 180px;
+				}
+				
+				@media only screen and (max-width: 800px) {
+					.custom-leadspace {
+						background-image: none;
+					}
+				}
+			{% endblock %}
+		</style>
+			
+		<script>
+			{% comment %}
+				// Setup global NS and add trick to use dynamic URLs in static JS/CSS files URLs.
+				// Can't do Django vars in static files, so we set it in the template like this.
+			{% endcomment %}
+			window.MA = {
+				'urls': {
+					'staticPath': '{% get_static_prefix %}',
+					'cdnPath': '{{ BLACKOPS_COS_BUCKET_URL }}',
+				}
+			};
+		</script>
+		
+		<script src="{{ BLACKOPS_COS_BUCKET_URL }}jquery.min.js"></script>
+		<script src="{{ BLACKOPS_COS_BUCKET_URL }}select2.min.js"></script>
+		<script src="{{ BLACKOPS_COS_BUCKET_URL }}micromodal.min.js"></script>
+		<script src="{{ BLACKOPS_COS_BUCKET_URL }}bo-common.min.js"></script>
+		<script src="{% static 'shared/js/site-common.js' %}"></script>
+
+		<script>
+			
+			(function () {
+				
+				
+			})(jQuery);
+			
+		</script>
+		
+		{% block extraFiles %} {% endblock %}
+
+	</head>
+
+
+	<body class="plex">
+		{% hijack_notification %}
+		{% bannerNotification %}
+		
+		{% if debug and DATABASE_HOST != 'localhost' %}
+			<div class="bg-dark-red white b h3 flex items-center justify-center">You are using the PRODUCTION database!</div>
+		{% endif %}
+		
+		<main role="main" aria-label="My app content">
+			{% block menunav %}
+				<nav class="bg-black near-white flex flex-wrap justify-between bo-sitenav pv0-ns pv1 {{ templateHelpers.classes.horizontalSpace }}">
+					<div>
+						<a class="{{ templateHelpers.classes.navItem }} mr4 fw8" href="{% url 'myapp:home' %}">My app</a>
+						 
+						{% if request.user.hasAdminAccess %}
+							<a class="{{ templateHelpers.classes.navItem }} mr4" href="{% url 'myapp:admin_home' %}">Admin</a>
+						{% endif %}
+						 
+						{% if request.user.is_superuser %}
+							<a class="{{ templateHelpers.classes.navItem }} mr4" href="{% url 'admin:index' %}">Django admin</a>
+						{% endif %}
+						 
+					</div>
+					
+					<div class="flex items-center">
+						{% if request.user.is_authenticated %}
+							<span class="mr3 f6">{{ request.user.username }}</span>
+							
+							{% if request.user.profile %}
+								<span class="dn db-ns overflow-hidden" style="width:40px;height:40px;"><img data-email="{{ request.user.username }}" width="40" height="40" class="custom-userimage br-100" aria-label="This is you"></span>
+							{% else %}
+								<span class="dn db-ns overflow-hidden" style="width:40px;height:40px;"><img src="{{ BLACKOPS_COS_BUCKET_URL }}c.gif" class="br-100" width="40" height="40" class="br-100" alt="Generic placeholder image"></span>
+							{% endif %}
+						{% else %}
+							<span class="mr3 f6"><a class="{{ templateHelpers.classes.navItem }}" href="{% url 'myapp:signin' %}">Sign in</a></span>
+						{% endif %}
+					</div>
+				</nav>
+			{% endblock %}
+
+			{% block leadspace %}
+				<div class="{{ templateHelpers.classes.grid }} custom-leadspace bg-near-black pv4" style="min-height: 150px;">
+					{% if breadcrumbs %}
+						<div class="f6 mb3">
+							{% for link in breadcrumbs %}<a class="link light-gray hover-sitecolor mr2 {{ templateHelpers.classes.hasIcon }}" href="{{ link.url }}">{{ link.text }}</a> <span class="mr2 light-gray">/</span> {% endfor %}
+						</div>
+					{% endif %}
+
+					<h1 class="lh-title f2 mt0 mb0 near-white w-70">{% block pageTitle %}Missing page title{% endblock %}</h1>
+					{% block pageSubtitle %}{% endblock %}
+					{% block leadspaceExtra %}{% endblock %}
+				</div>
+			{% endblock %}
+
+
+			{% if request.session.pageMessage %}
+				<div class="mt4 mb3 fw5 {{ templateHelpers.classes.grid }} {{ request.session.pageMessage.class }}">{{ request.session.pageMessage.text|safe }}</div>
+			{% endif %}
+
+
+			{% block content %} {% endblock %}
+
+
+			{% block footer %}
+				{% include 'partials/blackops_footer.html' %}
+			{% endblock %}
+
+		</main>
+
+		<div class="bo-modal" id="custom-help-modal" aria-hidden="true">
+			<div class="fixed flex justify-center items-center bg-black-60 top-0 right-0 bottom-0 left-0" tabindex="-1" data-micromodal-close>
+				<div class="w-90 mw6 bg-white pa4" role="dialog" aria-modal="true" aria-labelledby="modal-{{ modalNum }}-title" >
+					<header class="mb3 flex items-center justify-between">
+						<div class="b f4">Whatcha need?</div>
+						<button class="mt0 common-modal-close pointer h2 ba br2 ph3 border-box b--blue blue bg-white hover-bg-blue hover-white" aria-label="Close modal" data-micromodal-close></button>
+					</header>
+					
+					<div class="mb0-ns mb3"><a class="{{ templateHelpers.classes.hasIcon }} animate" href="https://github.ibm.com/__REPO_ISSUES_URL_HERE__">{{ templateHelpers.html.icons.chevronForward|safe }}I've got a bug / feature request / feedback for you</a></div>
+					
+				</div>
+			</div>
+		</div>
+		
+
+	</body>
+</html>

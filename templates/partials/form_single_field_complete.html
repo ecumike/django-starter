@@ -1,0 +1,19 @@
+	<div class="{{ templateHelpers.classes.grid }} mt4">
+		
+		{# form posts to same URL displaying it. #}
+		<form class="editform w-100" action="" method="post">
+			{% include 'partials/form_error_messages.html' with form=form %}
+		
+			{% csrf_token %}
+			
+			{% for field in form.visible_fields %}
+				<div class="flex items-center mb3">
+					<div>{{ field.label_tag }}</div>
+					<div class="pl3 mw6 w-100">{{ field }}</div>
+				</div>
+			{% endfor %}
+			
+			<button class="mt4 {{ templateHelpers.classes.button }} {{ templateHelpers.classes.bluePriButton }} ">Save</button>
+		</form>
+		
+	</div>

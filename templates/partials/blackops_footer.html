@@ -1,0 +1,15 @@
+{% load static %}
+
+<div class="f6 mt6 {{ templateHelpers.classes.grid }}">
+	<div>
+		<div class="mb2">Made with</div>
+		<div>
+			<a class="link mr2" href="https://www.djangoproject.com/" rel="noreferrer" target="_blank"><img src="{{ BLACKOPS_COS_BUCKET_URL }}django.svg" width="31" height="40" title="Django makes it easier to build better Web apps more quickly and with less code." alt="Made with Django"></a>
+
+			<a class="link" href="https://www.postgresql.org/" rel="noreferrer" target="_blank"><img src="{{ BLACKOPS_COS_BUCKET_URL }}postgresql.png" width="40" height="40" title="PostgreSQL: The world's most advanced open source relational database" alt="Made with PostgreSQL"></a>
+		</div>
+	</div>
+	<div class="mb3">
+		<div><a class="animate link underline-hover" href="https://pages.github.ibm.com/blackops/" rel="noreferrer" target="_blank">A Blackops team project <span class="relative ml1" style="top: 5px;">{{ templateHelpers.html.icons.newWindow|safe }}</span></a></div>
+	</div>
+</div>

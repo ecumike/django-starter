@@ -1,0 +1,17 @@
+/************************************************************************************************
+	Site-wide shared style vars and base setups for ALL apps. 
+	
+	"common-" prefix denotes it's a site-wide style defined here.
+************************************************************************************************/
+
+/*
+Patterns:
+	light-gray for white text on dark background.
+	gray for de-emphasized text 'gray' text on white.
+	mid-gray barely lighter than text color.
+*/
+
+:root {
+	--sitecolor: var(--gold);
+}
+

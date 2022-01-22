@@ -1,0 +1,13 @@
+{% if form.errors %}
+    <div class="ibm-margin-bottom-1">
+            <div class="ibm-textcolor-red-50 ibm-bold">Data was not saved due to errors:</div>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="ibm-textcolor-red-50"> - {{ error|escape }}</div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="ibm-textcolor-red-50"> - {{ error|escape }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

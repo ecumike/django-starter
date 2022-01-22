@@ -1,0 +1,14 @@
+{% extends "page_template.html" %}
+
+{% block browserTitle %}{{ block.super}} Error 500{% endblock %}
+
+{% block pageTitle %} Woops, now you've done it{% endblock  %}
+
+{% block content %}
+
+	<div class="{{ templateHelpers.classes.grid }} mb4 mt4">
+        <p class="b lh-copy">Uh oh! A 500 error just occurred. Something on this page caused a boo-boo and it can't be rendered. 
+            <br>Don't worry, the admins have just been notified.</p>
+	</div>
+	
+{% endblock %}
